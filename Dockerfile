@@ -1,20 +1,15 @@
-
 FROM alpine:latest
 
-RUN apk update \
-    && apk add --no-cache \
-       httpd \
-       unzip \
-       wget \
+COPY photogenic.zip /var/www/html/
+
+RUN apk --no-cache add \
+    apache2 \
+    unzip \
+    && unzip /var/www/html/photogenic.zip -d /var/www/html/ \
+    && rm /var/www/html/photogenic.zip \
     && rm -rf /var/cache/apk/*
 
 WORKDIR /var/www/html/
 
-ADD https://www.free-css.com/assets/files/free-css-templates/download/page254/photogenic.zip .
-
-RUN unzip photogenic.zip \
-    && cp -rvf photogenic/* . \
-    && rm -rf photogenic photogenic.zip
-
-CMD ["/usr/sbin/httpd","-D","FOREGROUND"]
+CMD ["httpd", "-D", "FOREGROUND"]
 EXPOSE 80
